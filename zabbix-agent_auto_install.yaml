@@ -1,0 +1,18 @@
+# zabbix-setting
+- hosts: group1
+  remote_user: user1
+  sudo: yes
+  #gather_facts: no
+  tasks:
+  - name: copy zabbix.repo
+    copy: src=/etc/yum.repos.d/zabbix.repo dest=/etc/yum.repos.d/zabbix.repo
+  - name: copy zabbix GPGKEY
+    copy: src=/etc/pki/rpm-gpg/RPM-GPG-KEY-ZABBIX dest=/etc/pki/rpm-gpg/RPM-GPG-KEY-ZABBIX
+  - name: install zabbix_agent
+    yum: name=zabbix-agent state=latest
+  - name: delete zabbix_agentd.conf
+    file: path=/etc/zabbix/zabbix_agentd.conf state=absent
+  - name: copy zabbix_agentd.conf
+    copy: src=./zabbix_agentd.conf dest=/etc/zabbix/zabbix_agentd.conf
+  - name: restart and enable zabbix-agent
+    service: name=zabbix-agent state=restarted enabled=yes
